@@ -1,6 +1,6 @@
 import { IUserInterface } from "../interfaces";
 import { IO } from "./IO";
-import { IGameInfo } from "../../Game";
+import { IGameInfo } from "../../GameController";
 
 export class ConsoleUI implements IUserInterface {
   async choseAction<T extends string>(options: T[]): Promise<T> {
@@ -17,74 +17,98 @@ export class ConsoleUI implements IUserInterface {
     ]);
   }
 
+  async chooseGameMode(availableModes: string[]): Promise<string | undefined> {
+    return;
+  }
+
   init(): void {
-    IO.write("***************************");
-    IO.write("**     Taste of IRON     **");
-    IO.write("**                       **");
-    IO.write("**    Its a game about   **");
-    IO.write("**     crushing faces!   **");
-    IO.write("***************************");
+    IO.writeDivider();
+    IO.write("Taste of IRON");
+    IO.writeEmpty();
+    IO.write("Its a game about");
+    IO.write("crushing faces!");
+    IO.writeDivider();
+  }
+
+  private showResult(title: string, info: IGameInfo, statsOnly = false): void {
+    IO.writeDivider();
+    IO.write(title);
+    IO.writeDivider(true);
+    IO.write(
+      [
+        "YOU",
+        `HP: ${info.player.health} SP: ${info.player.stamina} ${
+          statsOnly ? "" : info.player.executedAction
+        }`,
+      ],
+      false,
+    );
+    IO.writeDivider(true);
+    IO.write(
+      [
+        "EMY",
+        `HP: ${info.opponent.health} SP: ${info.opponent.stamina} ${
+          statsOnly ? "" : info.opponent.executedAction
+        }`,
+      ],
+      false,
+    );
+    IO.writeDivider();
+  }
+
+  private showBox(title: string): void {
+    IO.writeDivider();
+    IO.write(title);
+    IO.writeDivider();
+  }
+
+  showStats(info: IGameInfo): void {
+    this.showResult("FIGHTERS STATS", info, true);
   }
 
   showActionResults(info: IGameInfo): void {
-    IO.write("***************************");
-    IO.write("***    ACTION RESULTS   ***");
-    IO.write("***************************");
-    IO.write(
-      `* YOU * HP: ${info.player.health} SP: ${info.player.stamina} ${info.player.executedAction} *`,
-    );
-    IO.write("***************************");
-    IO.write(
-      `* EMY * HP: ${info.opponent.health} SP: ${info.opponent.stamina} ${info.opponent.executedAction} *`,
-    );
-    IO.write("***************************");
+    this.showResult("ACTION RESULTS", info);
   }
 
   showMatchResults(info: IGameInfo): void {
-    IO.write("***************************");
-    IO.write("***    MATCH RESULTS    ***");
-    IO.write("***************************");
-    IO.write(`* YOU * HP: ${info.player.health} SP: ${info.player.stamina} *`);
-    IO.write("***************************");
-    IO.write(
-      `* EMY * HP: ${info.opponent.health} SP: ${info.opponent.stamina} *`,
-    );
-    IO.write("***************************");
+    this.printGameStatus(info.winnerId);
+    this.showResult("MATCH RESULTS", info);
   }
 
   showRoundResults(info: IGameInfo): void {
-    IO.write("***************************");
-    IO.write("***    ROUND RESULTS    ***");
-    IO.write("***************************");
-    IO.write(
-      `* YOU *  HP: ${info.player.health} SP: ${info.player.stamina}  *`,
-    );
-    IO.write("***************************");
-    IO.write(
-      `* EMY *  HP: ${info.opponent.health} SP: ${info.opponent.stamina}  *`,
-    );
-    IO.write("***************************");
+    this.showBox("BREAK");
+    this.showResult("ROUND RESULTS", info, true);
   }
 
-  showGameOver(): void {
-    IO.write("***************************");
-    IO.write("*****    GAME OVER    *****");
-    IO.write("***************************");
+  private printGameStatus(winnerId?: string | null): void {
+    if (winnerId === "0") {
+      this.showCongratulations();
+      return;
+    }
+
+    if (winnerId === "1") {
+      this.showGameOver();
+      return;
+    }
+
+    this.showDraw();
   }
 
-  showCongratulations(): void {
-    IO.write("***************************");
-    IO.write("**  CONGRATULATIONS !!!  **");
-    IO.write("***************************");
+  private showGameOver(): void {
+    this.showBox("GAME OVER");
   }
 
-  showDraw(): void {
-    IO.write("***************************");
-    IO.write("******    DRAW !!!    *****");
-    IO.write("***************************");
+  private showCongratulations(): void {
+    this.showBox("CONGRATULATIONS !!!");
+  }
+
+  private showDraw(): void {
+    this.showBox("DRAW");
   }
 
   async confirmRetry(): Promise<boolean> {
     return IO.confirm("Ready for retry?");
   }
+
+  destroy() {}
 }

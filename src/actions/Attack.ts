@@ -1,63 +1,53 @@
-import { ActorStatus, IActor } from "../actor";
+import { Actor, ActorStatus, IActor } from "../actor";
 import { IAction } from "./interfaces";
-import { BasicAction } from "./BasicAction";
 
-export class AttackAction extends BasicAction implements IAction {
+export class AttackAction implements IAction {
   constructor(
     protected actor: IActor,
     protected opponent: IActor,
-  ) {
-    super(actor, opponent);
-  }
+  ) {}
 
-  private DAMAGE = 2;
-  private STAMINA_COST = 2;
-  private ENEMY_ACTIONS_FOR_SUCCESS = [
+  static ACTION_TYPE = ActorStatus.ATTACK;
+  static HEALTH_DAMAGE = 2;
+  static STAMINA_DAMAGE = 0;
+  static HEALTH_COST = 0;
+  static STAMINA_COST = 2;
+  static ENEMY_ACTIONS_FOR_SUCCESS = [
     ActorStatus.BLOCK,
     ActorStatus.REST,
     ActorStatus.IDLE,
+    ActorStatus.DODGE,
   ];
+  static get ENEMY_ACTIONS_FOR_FAIL(): ActorStatus[] {
+    return Actor.POSSIBLE_ACTIONS.filter(
+      (action) => !AttackAction.ENEMY_ACTIONS_FOR_SUCCESS.includes(action),
+    );
+  }
 
   private checkSuccess(): boolean {
-    return this.ENEMY_ACTIONS_FOR_SUCCESS.includes(
+    return AttackAction.ENEMY_ACTIONS_FOR_SUCCESS.includes(
       this.opponent.executedAction,
     );
   }
 
-  private checkPossibility(): boolean {
-    if (this.actor.stamina - this.STAMINA_COST < 0) {
-      return false;
-    }
-
-    return true;
-  }
-
-  private payForAction(): void {
-    this.actor.stamina = this.actor.stamina - this.STAMINA_COST;
-    this.actor.executedAction = this.actor.selectedAction;
-  }
-
   prepare() {
-    if (this.checkPossibility()) {
-      this.payForAction();
-      return;
-    }
-
-    this.fallback();
+    this.actor.prepareAction(
+      0,
+      AttackAction.STAMINA_COST,
+      AttackAction.ACTION_TYPE,
+    );
   }
-
-  private success() {}
 
   private fail() {
-    this.actor.health = this.actor.health - this.DAMAGE;
+    this.actor.reducePoints(
+      AttackAction.HEALTH_DAMAGE,
+      AttackAction.STAMINA_DAMAGE,
+    );
   }
 
   execute() {
-    if (this.checkSuccess()) {
-      this.success();
-      return;
+    if (!this.checkSuccess()) {
+      this.fail();
     }
-
-    this.fail();
   }
 }

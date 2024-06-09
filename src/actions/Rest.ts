@@ -1,39 +1,57 @@
-import { ActorStatus, IActor } from "../actor";
+import { Actor, ActorStatus, IActor } from "../actor";
 import { IAction } from "./interfaces";
-import { BasicAction } from "./BasicAction";
 
-export class RestActon extends BasicAction implements IAction {
+export class RestAction implements IAction {
   constructor(
     protected actor: IActor,
     protected opponent: IActor,
-  ) {
-    super(actor, opponent);
-  }
+  ) {}
 
-  private DAMAGE_TROUGH_REST = 2;
-  private STAMINA_TO_REGENERATE = 2;
-  private ENEMY_ACTIONS_FOR_SUCCESS = [
+  static ACTION_TYPE = ActorStatus.REST;
+  static HEALTH_COST = 0;
+  static STAMINA_COST = 0;
+  static DAMAGE_TROUGH_HEALTH = 2;
+  static DAMAGE_TROUGH_STAMINA = 0;
+  static HEALTH_TO_REGENERATE = 0;
+  static STAMINA_TO_REGENERATE = 2;
+  static ENEMY_ACTIONS_FOR_SUCCESS = [
     ActorStatus.BLOCK,
     ActorStatus.REST,
     ActorStatus.IDLE,
+    ActorStatus.DODGE,
   ];
+  static get ENEMY_ACTIONS_FOR_FAIL(): ActorStatus[] {
+    return Actor.POSSIBLE_ACTIONS.filter(
+      (action) => !RestAction.ENEMY_ACTIONS_FOR_SUCCESS.includes(action),
+    );
+  }
 
   private checkSuccess(): boolean {
-    return this.ENEMY_ACTIONS_FOR_SUCCESS.includes(
+    return RestAction.ENEMY_ACTIONS_FOR_SUCCESS.includes(
       this.opponent.executedAction,
     );
   }
 
   prepare() {
-    this.actor.executedAction = ActorStatus.REST;
+    this.actor.prepareAction(
+      RestAction.HEALTH_COST,
+      RestAction.STAMINA_COST,
+      RestAction.ACTION_TYPE,
+    );
   }
 
   private success() {
-    this.actor.stamina = this.actor.stamina + this.STAMINA_TO_REGENERATE;
+    this.actor.producePoints(
+      RestAction.HEALTH_TO_REGENERATE,
+      RestAction.STAMINA_TO_REGENERATE,
+    );
   }
 
   private fail() {
-    this.actor.health = this.actor.health - this.DAMAGE_TROUGH_REST;
+    this.actor.reducePoints(
+      RestAction.DAMAGE_TROUGH_HEALTH,
+      RestAction.DAMAGE_TROUGH_STAMINA,
+    );
   }
 
   execute() {

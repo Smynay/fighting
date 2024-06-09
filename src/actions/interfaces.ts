@@ -3,7 +3,6 @@ import { IActor } from "../actor";
 export interface IAction {
   prepare(): void;
   execute(): void;
-  end(): void;
 }
 
 export interface IActionConstructor {
