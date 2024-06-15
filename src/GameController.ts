@@ -106,6 +106,7 @@ export class GameController {
       }
     }
 
+    this.state = GameState.END;
     this.ui.showMatchResults(this.info);
   }
 
@@ -192,8 +193,6 @@ export class GameController {
   }
 
   private async askForRetry(): Promise<void> {
-    this.state = GameState.END;
-
     if (await this.ui.confirmRetry()) {
       this.counter.reset();
       await this.start();
