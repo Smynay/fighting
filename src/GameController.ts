@@ -16,7 +16,7 @@ export enum GameMode {
 export enum GameState {
   PREPARE = "prepare",
   RUN = "run",
-  RETRY = "retry",
+  END = "end",
 }
 
 export interface IGameInfo {
@@ -192,7 +192,7 @@ export class GameController {
   }
 
   private async askForRetry(): Promise<void> {
-    this.state = GameState.RETRY;
+    this.state = GameState.END;
 
     if (await this.ui.confirmRetry()) {
       this.counter.reset();
