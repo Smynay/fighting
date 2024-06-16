@@ -118,8 +118,6 @@ export class Server implements IUserInterface {
         return;
       }
 
-      console.log(this.gameMode);
-
       if (this.gameMode === GameMode.PvE) {
         this.serverRunCode = EServerRunCodes.RUN;
 

@@ -177,13 +177,11 @@ export class GameController {
 
     this.ui.init();
 
-    if (this.isPvP) {
+    if (this.isPvP || gameMode === GameMode.PvP) {
       this.gameMode = GameMode.PvP;
+    } else {
+      this.gameMode = GameMode.PvE;
     }
-
-    this.gameMode = gameMode || this.gameMode;
-
-    console.log(this.gameMode, gameMode);
 
     if (this.gameMode === GameMode.PvP) {
       this.actors = [ActorId.FIRST, ActorId.SECOND];
