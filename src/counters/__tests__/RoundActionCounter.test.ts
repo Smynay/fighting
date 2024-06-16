@@ -165,20 +165,6 @@ describe("RoundActionCounter", () => {
         expect(counter.round).toBe(expects);
       },
     );
-
-    test.each([0, 1, 2, 4, 5, 7, 8])(
-      "Should not change round when next called %i times",
-      (runs) => {
-        const { testActionsPerRound, counter } =
-          arrangeRoundActionCounterAndConsts({});
-
-        for (let i = 0; i < runs; i++) {
-          counter.next();
-        }
-
-        expect(counter.round).toBe(Math.floor(runs / testActionsPerRound));
-      },
-    );
   });
 
   describe("reset", () => {

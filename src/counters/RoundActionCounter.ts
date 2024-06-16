@@ -42,9 +42,9 @@ export class RoundActionCounter {
   }
 
   private changeRoundIfNeed(): void {
-    const isLastInRoundAction = !Boolean(this._action % this.actionsPerRound);
+    const isFirstInRoundAction = this._action % this.actionsPerRound === 1;
 
-    if (isLastInRoundAction) {
+    if (isFirstInRoundAction) {
       this._round += 1;
     }
   }
