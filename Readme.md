@@ -2,7 +2,7 @@
 
 ---
 
-It`s a step-by-step fighting game that can be launched in **CLI** and **Server mode**.
+It`s a turn-based fighting game that can be launched in **CLI** and **Server mode**.
 Game supports a two different gameplay modes such as **PvP** (only for Server) and **PvE**.
 
 Game goal is win your opponent. For achieve this goal you should make the right decisions,
