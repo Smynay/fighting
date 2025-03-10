@@ -86,7 +86,7 @@ export class ConsoleUI implements IUserInterface {
       return;
     }
 
-    if (winnerId === "1") {
+    if (winnerId === "1" || winnerId === "2") {
       this.showGameOver();
       return;
     }

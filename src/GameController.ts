@@ -1,8 +1,8 @@
 import { IUserInterface } from "./ui/interfaces";
 import { Actor, ActorId, ActorStatus, IActor, IActorInfo } from "./actor";
-import { RandomAI } from "./ai";
 import { RoundActionCounter } from "./counters";
 import { ActionCalculator, RoundBreakCalculator } from "./calculators";
+import { Medium } from "./ai";
 
 export interface IGameControllerConstructor {
   new (ui: IUserInterface, isPvP?: boolean): GameController;
@@ -39,7 +39,7 @@ export class GameController {
     GameController.MAX_ROUNDS,
     GameController.ACTIONS_PER_ROUND,
   );
-  private ai = new RandomAI();
+  private ai = new Medium();
   private gameMode: GameMode = GameMode.PvE;
   private actors: [ActorId, ActorId] = [ActorId.FIRST, ActorId.AI];
   private state: GameState = GameState.PREPARE;
