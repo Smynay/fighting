@@ -20,6 +20,14 @@ export class BlockAction implements IAction {
     );
   }
 
+  get info() {
+    return {
+      description: "Blocks incoming damage",
+      healthDamageThrow: BlockAction.DAMAGE_TROUGH_HEALTH,
+      staminaCost: BlockAction.STAMINA_COST,
+    };
+  }
+
   private checkSuccess(): boolean {
     return BlockAction.ENEMY_ACTIONS_FOR_SUCCESS.includes(
       this.opponent.executedAction,

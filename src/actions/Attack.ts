@@ -24,6 +24,14 @@ export class AttackAction implements IAction {
     );
   }
 
+  get info() {
+    return {
+      description: "Deal damage to opponent",
+      healthDamage: AttackAction.HEALTH_DAMAGE,
+      staminaCost: AttackAction.STAMINA_COST,
+    };
+  }
+
   private checkSuccess(): boolean {
     return AttackAction.ENEMY_ACTIONS_FOR_SUCCESS.includes(
       this.opponent.executedAction,

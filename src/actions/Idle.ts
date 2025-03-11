@@ -25,6 +25,13 @@ export class IdleAction implements IAction {
     );
   }
 
+  get info() {
+    return {
+      description: "Service action means DO NOTHING",
+      staminaCost: 0,
+    };
+  }
+
   private checkSuccess(): boolean {
     return IdleAction.ENEMY_ACTIONS_FOR_SUCCESS.includes(
       this.opponent.executedAction,

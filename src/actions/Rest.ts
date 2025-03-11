@@ -26,6 +26,15 @@ export class RestAction implements IAction {
     );
   }
 
+  get info() {
+    return {
+      description: "Regenerate your health if no damage",
+      staminaCost: RestAction.STAMINA_COST,
+      staminaRegenerate: RestAction.STAMINA_TO_REGENERATE,
+      healthDamageThrow: RestAction.DAMAGE_TROUGH_HEALTH,
+    };
+  }
+
   private checkSuccess(): boolean {
     return RestAction.ENEMY_ACTIONS_FOR_SUCCESS.includes(
       this.opponent.executedAction,
