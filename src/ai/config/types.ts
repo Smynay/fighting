@@ -3,7 +3,7 @@ import { ActorStatus, IActor } from "../../actor";
 type ConfigAction = {
   action: ActorStatus;
   chance: number;
-  test?: (actor: IActor) => boolean;
+  test?: (actor: IActor, opponent?: IActor) => boolean;
 };
 
 export type ConfigActions = ConfigAction[];
@@ -15,7 +15,7 @@ export enum AIMode {
 }
 
 type ModeConfig = {
-  test?: (actor: IActor) => boolean;
+  test?: (actor: IActor, opponent?: IActor) => boolean;
   actions: ConfigActions;
 };
 

@@ -13,8 +13,6 @@ export class Easy implements AI {
   }
 
   getAction(): ActorStatus {
-    console.log("ai", this.actor.health, this.actor.stamina);
-
     return this.logic.getAction(this.actor);
   }
 
@@ -23,4 +21,6 @@ export class Easy implements AI {
 
     return this.actor;
   }
+
+  setOpponent(actor: IActor) {}
 }

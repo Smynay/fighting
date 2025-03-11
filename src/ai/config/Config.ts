@@ -10,15 +10,24 @@ export class AILogic {
     this.config = config;
   }
 
-  getAction(actor: IActor): ActorStatus {
-    const preparedConfigActions = this.prepareConfigActions(actor);
-    const preparedActions = this.prepareActions(actor, preparedConfigActions);
+  getAction(actor: IActor, opponent?: IActor): ActorStatus {
+    const preparedConfigActions = this.prepareConfigActions(actor, opponent);
+    const preparedActions = this.prepareActions(
+      actor,
+      preparedConfigActions,
+      opponent,
+    );
 
     return this.getActionByChance(preparedActions);
   }
-  private prepareConfigActions(actor: IActor): ConfigActions {
+  private prepareConfigActions(
+    actor: IActor,
+    opponent?: IActor,
+  ): ConfigActions {
     const aiMode = ALLOWED_AI_MODES.find((key) => {
-      return this.config[key].test ? this.config[key].test?.(actor) : true;
+      return this.config[key].test
+        ? this.config[key].test?.(actor, opponent)
+        : true;
     });
 
     if (!aiMode) {
@@ -33,9 +42,10 @@ export class AILogic {
   private prepareActions = (
     actor: IActor,
     configActions: ConfigActions,
+    opponent?: IActor,
   ): ConfigActions => {
     return configActions.filter((action) =>
-      action.test ? action.test(actor) : true,
+      action.test ? action.test(actor, opponent) : true,
     );
   };
 

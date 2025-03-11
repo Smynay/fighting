@@ -22,4 +22,6 @@ export class RandomAI implements AI {
   getActor(): IActor {
     return new Actor(getRandomInt(5, 1), getRandomInt(5, 1));
   }
+
+  setOpponent(actor: IActor) {}
 }

@@ -2,7 +2,7 @@ import { IUserInterface } from "./ui/interfaces";
 import { Actor, ActorId, ActorStatus, IActor, IActorInfo } from "./actor";
 import { RoundActionCounter } from "./counters";
 import { ActionCalculator, RoundBreakCalculator } from "./calculators";
-import { Medium } from "./ai";
+import { Hard } from "./ai";
 
 export interface IGameControllerConstructor {
   new (ui: IUserInterface, isPvP?: boolean): GameController;
@@ -39,7 +39,7 @@ export class GameController {
     GameController.MAX_ROUNDS,
     GameController.ACTIONS_PER_ROUND,
   );
-  private ai = new Medium();
+  private ai = new Hard();
   private gameMode: GameMode = GameMode.PvE;
   private actors: [ActorId, ActorId] = [ActorId.FIRST, ActorId.AI];
   private state: GameState = GameState.PREPARE;
@@ -141,6 +141,10 @@ export class GameController {
 
   private async setActors(): Promise<void> {
     await Promise.all(this.actors.map((id) => this.setActor(id)));
+
+    if (this.gameMode === GameMode.PvE) {
+      this.ai.setOpponent(this.actor);
+    }
   }
 
   private async getAction(id: ActorId): Promise<ActorStatus> {
