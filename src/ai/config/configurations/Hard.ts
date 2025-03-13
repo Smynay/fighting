@@ -29,7 +29,7 @@ const scaredActions: ConfigActions = [
     action: ActorStatus.REST,
     chance: 30,
     test: (actor, opponent) =>
-      Boolean(opponent && opponent.stamina < AttackAction.STAMINA_COST),
+      Boolean(opponent && opponent.stamina < AttackAction.STAMINA_COST || actor.stamina < DodgeAction.STAMINA_COST),
   },
   {
     action: ActorStatus.DODGE,
