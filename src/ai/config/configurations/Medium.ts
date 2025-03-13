@@ -51,15 +51,17 @@ const normalActions: ConfigActions = [
 
 export const mediumConfig: AIConfig = {
   name: "mediumConfig",
-  [AIMode.CONVINCED]: {
-    test: (actor) => actor.health > 2 && actor.stamina > 2,
-    actions: convincedActions,
-  },
-  [AIMode.SCARED]: {
-    test: (actor) => actor.health < 2 && actor.stamina <= 2,
-    actions: scaredActions,
-  },
-  [AIMode.NORMAL]: {
-    actions: normalActions,
+  modes: {
+    [AIMode.CONVINCED]: {
+      test: (actor) => actor.health > 2 && actor.stamina > 2,
+      actions: convincedActions,
+    },
+    [AIMode.SCARED]: {
+      test: (actor) => actor.health < 2 && actor.stamina <= 2,
+      actions: scaredActions,
+    },
+    [AIMode.DEFAULT]: {
+      actions: normalActions,
+    },
   },
 };

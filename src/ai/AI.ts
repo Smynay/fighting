@@ -1,19 +1,19 @@
-import { AI } from "./interfaces";
 import { Actor, ActorStatus, IActor } from "../actor";
 import { AILogic } from "./config";
-import { mediumConfig } from "./config";
 import { getRandomInt } from "../utils";
+import { AIConfig } from "./config/types";
 
-export class Medium implements AI {
+export class AI {
   private actor: IActor = new Actor(0, 0);
+  private opponent?: IActor;
   private readonly logic: AILogic;
 
-  constructor() {
-    this.logic = new AILogic(mediumConfig);
+  constructor(config: AIConfig) {
+    this.logic = new AILogic(config);
   }
 
   getAction(): ActorStatus {
-    return this.logic.getAction(this.actor);
+    return this.logic.getAction(this.actor, this.opponent);
   }
 
   getActor(): IActor {
@@ -22,5 +22,7 @@ export class Medium implements AI {
     return this.actor;
   }
 
-  setOpponent(actor: IActor) {}
+  setOpponent(actor: IActor) {
+    this.opponent = actor;
+  }
 }

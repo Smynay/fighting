@@ -1,6 +1,5 @@
 import { ActorStatus, IActor } from "../../actor";
 import { AIConfig, ConfigActions } from "./types";
-import { ALLOWED_AI_MODES } from "./consts";
 import { getRandomInt } from "../../utils";
 
 export class AILogic {
@@ -24,10 +23,14 @@ export class AILogic {
     actor: IActor,
     opponent?: IActor,
   ): ConfigActions {
-    const aiMode = ALLOWED_AI_MODES.find((key) => {
-      return this.config[key].test
-        ? this.config[key].test?.(actor, opponent)
-        : true;
+    const aiMode = Object.keys(this.config.modes).find((key) => {
+      const mode = this.config.modes[key];
+
+      if (!mode) {
+        return false;
+      }
+
+      return mode.test ? mode.test?.(actor, opponent) : true;
     });
 
     if (!aiMode) {
@@ -36,7 +39,7 @@ export class AILogic {
       );
     }
 
-    return this.config[aiMode].actions;
+    return this.config.modes[aiMode].actions;
   }
 
   private prepareActions = (

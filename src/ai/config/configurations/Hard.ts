@@ -17,7 +17,10 @@ const convincedActions: ConfigActions = [
     action: ActorStatus.REST,
     chance: 20,
     test: (actor, opponent) =>
-      Boolean(opponent && opponent.stamina < AttackAction.STAMINA_COST),
+      Boolean(
+        (opponent && opponent.stamina < AttackAction.STAMINA_COST) ||
+          actor.stamina < AttackAction.STAMINA_COST,
+      ),
   },
 ];
 
@@ -45,7 +48,8 @@ const scaredActions: ConfigActions = [
       Boolean(
         actor.stamina >= BlockAction.STAMINA_COST &&
           opponent &&
-          opponent.stamina >= AttackAction.STAMINA_COST,
+          opponent.stamina >= AttackAction.STAMINA_COST &&
+          actor.health > AttackAction.HEALTH_DAMAGE,
       ),
   },
 ];
@@ -81,35 +85,37 @@ const normalActions: ConfigActions = [
 
 export const hardConfig: AIConfig = {
   name: "hardConfig",
-  [AIMode.CONVINCED]: {
-    test: (actor, opponent) => {
-      if (actor.health > 2 && actor.stamina > 2) {
-        return true;
-      }
+  modes: {
+    [AIMode.CONVINCED]: {
+      test: (actor, opponent) => {
+        if (actor.health > 2 && actor.stamina > 2) {
+          return true;
+        }
 
-      if (opponent && opponent?.stamina <= 2) {
-        return true;
-      }
+        if (opponent && opponent?.stamina <= 2) {
+          return true;
+        }
 
-      return false;
+        return false;
+      },
+      actions: convincedActions,
     },
-    actions: convincedActions,
-  },
-  [AIMode.SCARED]: {
-    test: (actor, opponent) => {
-      if (actor.health < 2 && actor.stamina <= 2) {
-        return true;
-      }
+    [AIMode.SCARED]: {
+      test: (actor, opponent) => {
+        if (actor.health < 2 && actor.stamina <= 2) {
+          return true;
+        }
 
-      if (opponent && (opponent?.health > 3 || opponent?.stamina > 4)) {
-        return true;
-      }
+        if (opponent && (opponent?.health > 3 || opponent?.stamina > 4)) {
+          return true;
+        }
 
-      return false;
+        return false;
+      },
+      actions: scaredActions,
     },
-    actions: scaredActions,
-  },
-  [AIMode.NORMAL]: {
-    actions: normalActions,
+    [AIMode.DEFAULT]: {
+      actions: normalActions,
+    },
   },
 };

@@ -10,7 +10,7 @@ export type ConfigActions = ConfigAction[];
 
 export enum AIMode {
   CONVINCED = "convinced",
-  NORMAL = "normal",
+  DEFAULT = "default",
   SCARED = "scared",
 }
 
@@ -19,8 +19,12 @@ type ModeConfig = {
   actions: ConfigActions;
 };
 
-type ConfigAdditions = {
-  name: string;
+export type ConfigModes = {
+  [AIMode.DEFAULT]: ModeConfig;
+  [key: string]: ModeConfig;
 };
 
-export type AIConfig = Record<AIMode, ModeConfig> & ConfigAdditions;
+export type AIConfig = {
+  name: string;
+  modes: ConfigModes;
+};

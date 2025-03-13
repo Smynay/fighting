@@ -12,6 +12,7 @@ const LOOPTIME = 1000;
 enum EServerEvents {
   INIT = "fighting/init",
   CHOOSE_GAME_MODE = "fighting/chooseGameMode",
+  CHOOSE_AI = "fighting/chooseAi",
   CREATE_ACTOR = "fighting/createActor",
   SHOW_STATS = "fighting/showStats",
   CHOOSE_ACTION = "fighting/chooseAction",
@@ -166,6 +167,14 @@ export class Server implements IUserInterface {
 
     return this.runRequest(EServerEvents.CHOOSE_ACTION, id, {
       actions: options,
+    });
+  }
+
+  chooseAi<T extends string>(availableAis: T[]): Promise<T | undefined> {
+    this.currentGameRequest = EServerEvents.CHOOSE_AI;
+
+    return this.runRequest(EServerEvents.CHOOSE_AI, "0", {
+      options: availableAis,
     });
   }
 

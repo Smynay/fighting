@@ -1,4 +1,2 @@
-export * from "./Random";
-export * from "./Easy";
-export * from "./Medium";
-export * from "./Hard";
+export * from "./AIFactory";
+export * from "./AI";

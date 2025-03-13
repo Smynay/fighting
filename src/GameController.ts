@@ -2,7 +2,7 @@ import { IUserInterface } from "./ui/interfaces";
 import { Actor, ActorId, ActorStatus, IActor, IActorInfo } from "./actor";
 import { RoundActionCounter } from "./counters";
 import { ActionCalculator, RoundBreakCalculator } from "./calculators";
-import { Hard } from "./ai";
+import { AIFactory, AI } from "./ai";
 
 export interface IGameControllerConstructor {
   new (ui: IUserInterface, isPvP?: boolean): GameController;
@@ -39,7 +39,9 @@ export class GameController {
     GameController.MAX_ROUNDS,
     GameController.ACTIONS_PER_ROUND,
   );
-  private ai = new Hard();
+  private aiFactory = new AIFactory();
+  private ai: AI = this.aiFactory.getAIByType();
+  private isAIChosen = false;
   private gameMode: GameMode = GameMode.PvE;
   private actors: [ActorId, ActorId] = [ActorId.FIRST, ActorId.AI];
   private state: GameState = GameState.PREPARE;
@@ -187,6 +189,10 @@ export class GameController {
       this.gameMode = GameMode.PvE;
     }
 
+    if (this.gameMode === GameMode.PvE) {
+      await this.askForAi();
+    }
+
     if (this.gameMode === GameMode.PvP) {
       this.actors = [ActorId.FIRST, ActorId.SECOND];
     }
@@ -203,5 +209,16 @@ export class GameController {
 
     this.counter.reset();
     this.ui.destroy();
+  }
+
+  private async askForAi(): Promise<void> {
+    if (this.isAIChosen) {
+      return;
+    }
+
+    const selectedAi = await this.ui.chooseAi(this.aiFactory.allowedAITypes);
+
+    this.ai = this.aiFactory.getAIByType(selectedAi);
+    this.isAIChosen = true;
   }
 }

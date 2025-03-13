@@ -21,6 +21,10 @@ export class ConsoleUI implements IUserInterface {
     return;
   }
 
+  async chooseAi<T extends string>(availableAis: T[]): Promise<T | undefined> {
+    return await IO.select("Chose your ai opponent difficulty:", availableAis);
+  }
+
   init(): void {
     IO.writeDivider();
     IO.write("Taste of IRON");
