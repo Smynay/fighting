@@ -8,6 +8,7 @@ import {
 } from "../../GameController";
 
 const LOOPTIME = 1000;
+const SERVER_PORT = 3000;
 
 enum EServerEvents {
   INIT = "fighting/init",
@@ -52,7 +53,7 @@ export class Server implements IUserInterface {
   constructor(private ControllerConstructor: IGameControllerConstructor) {
     this.controller = new ControllerConstructor(this);
 
-    this.server = new WebSocketServer({ port: 3000 });
+    this.server = new WebSocketServer({ port: SERVER_PORT });
 
     this.server.on("connection", (ws) => {
       if (this.members.size >= 2) {
@@ -95,6 +96,8 @@ export class Server implements IUserInterface {
         this.run();
       }
     });
+
+    console.log(`Server has been started on port ${SERVER_PORT}`);
   }
 
   private async run(): Promise<void> {

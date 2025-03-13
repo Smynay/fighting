@@ -4,6 +4,7 @@ import { getRandomInt } from "../../utils";
 
 export class AILogic {
   private readonly config: AIConfig;
+  private activeMode: string | undefined = undefined;
 
   constructor(config: AIConfig) {
     this.config = config;
@@ -33,9 +34,11 @@ export class AILogic {
       return mode.test ? mode.test?.(actor, opponent) : true;
     });
 
+    this.activeMode = aiMode;
+
     if (!aiMode) {
       throw new Error(
-        `Check test functions in your configuration file of ${this.config.name}`,
+        `Check test functions in your configuration of ${this.config.name} file`,
       );
     }
 
@@ -75,7 +78,7 @@ export class AILogic {
 
     if (!result) {
       throw new Error(
-        `Check actions chances in your configuration file of ${this.config.name}`,
+        `Check actions chances in your ${this.activeMode} mode configuration of ${this.config.name} file`,
       );
     }
 
