@@ -7,7 +7,7 @@ export interface IUserInterface {
 
   chooseAi<T extends string>(availableAis: T[]): Promise<T | undefined>;
 
-  createActor(id: string): Promise<{ health: number; stamina: number }>;
+  createActor<T extends string>(options: T[], id: string): Promise<T>;
 
   showStats(info: IGameInfo): void;
 

@@ -7,14 +7,8 @@ export class ConsoleUI implements IUserInterface {
     return await IO.select("Chose your action:", options);
   }
 
-  async createActor(): Promise<{ health: number; stamina: number }> {
-    return await IO.scale("Complete your stats:", { health: 2, stamina: 2 }, [
-      { name: 1, message: "extra light" },
-      { name: 2, message: "light" },
-      { name: 3, message: "medium" },
-      { name: 4, message: "heavy" },
-      { name: 5, message: "extra heavy" },
-    ]);
+  async createActor<T extends string>(options: T[], id: string): Promise<T> {
+    return await IO.select("Chose your actor type:", options);
   }
 
   async chooseGameMode(availableModes: string[]): Promise<string | undefined> {

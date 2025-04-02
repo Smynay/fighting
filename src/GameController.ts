@@ -32,6 +32,20 @@ export class GameController {
   static MAX_ROUNDS = 3;
   static ACTIONS_PER_ROUND = 3;
   static AVAILABLE_MODES = [GameMode.PvE, GameMode.PvP];
+  static AVAILABLE_ACTOR_PRESETS = {
+    light: {
+      health: 2,
+      stamina: 4,
+    },
+    medium: {
+      health: 3,
+      stamina: 3,
+    },
+    heavy: {
+      health: 4,
+      stamina: 2,
+    },
+  } as const;
 
   private actor: IActor = new Actor(0, 0);
   private opponent: IActor = new Actor(0, 0);
@@ -82,6 +96,18 @@ export class GameController {
     return this.opponent.id;
   }
 
+  private get availableActorPresets(): (keyof typeof GameController.AVAILABLE_ACTOR_PRESETS)[] {
+    return Object.keys(
+      GameController.AVAILABLE_ACTOR_PRESETS,
+    ) as (keyof typeof GameController.AVAILABLE_ACTOR_PRESETS)[];
+  }
+
+  private getPresetByKey(
+    key: keyof typeof GameController.AVAILABLE_ACTOR_PRESETS,
+  ): { health: number; stamina: number } {
+    return GameController.AVAILABLE_ACTOR_PRESETS[key];
+  }
+
   async start(gameMode?: GameMode) {
     await this.prepareGame(gameMode);
 
@@ -127,7 +153,8 @@ export class GameController {
       return this.ai.getActor();
     }
 
-    const { health, stamina } = await this.ui.createActor(id);
+    const preset = await this.ui.createActor(this.availableActorPresets, id);
+    const { health, stamina } = this.getPresetByKey(preset);
 
     return new Actor(health, stamina, id);
   }

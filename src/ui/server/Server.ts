@@ -188,12 +188,15 @@ export class Server implements IUserInterface {
     return this.runRequest<boolean>(EServerEvents.CONFIRM_RETRY, "0");
   }
 
-  createActor(id: string): Promise<{ health: number; stamina: number }> {
+  createActor<T extends string>(options: T[], id: string): Promise<T> {
     console.log("createActor", id);
 
     this.currentGameRequest = EServerEvents.CREATE_ACTOR;
 
-    return this.runRequest(EServerEvents.CREATE_ACTOR, id);
+    // TODO: add frontend support
+    return this.runRequest(EServerEvents.CREATE_ACTOR, id, {
+      options,
+    });
   }
 
   async chooseGameMode(availableModes: string[]): Promise<string | undefined> {
