@@ -21,6 +21,7 @@ export class IO {
       type: "confirm",
       name: "result",
       message: text,
+      initial: true,
     });
 
     return result;
