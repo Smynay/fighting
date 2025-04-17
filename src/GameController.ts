@@ -228,9 +228,11 @@ export class GameController {
   }
 
   private async prepareGame(gameMode?: GameMode): Promise<void> {
-    this.state = GameState.PREPARE;
+    if (this.state !== GameState.END) {
+      this.ui.init();
+    }
 
-    this.ui.init();
+    this.state = GameState.PREPARE;
 
     if (this.isPvP || gameMode === GameMode.PvP) {
       this.gameMode = GameMode.PvP;
