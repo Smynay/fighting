@@ -1,6 +1,11 @@
 import { GameController } from "./GameController";
-import { ConsoleUI } from "./ui";
+import { ConsoleUI, Server } from "./ui";
 
-const ui = new ConsoleUI();
+switch (process.env.NODE_ENV) {
+  case "server":
+    new Server(GameController);
+    break;
 
-new GameController(ui).start();
+  default:
+    new GameController(new ConsoleUI()).start();
+}

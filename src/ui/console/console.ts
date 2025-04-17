@@ -1,90 +1,146 @@
-import { IUserInterface } from "../interfaces";
+import { IUIOption, IUserInterface } from "../interfaces";
 import { IO } from "./IO";
-import { IGameInfo } from "../../Game";
+import { IGameInfo, IPresetAndDetails } from "../../GameController";
 
 export class ConsoleUI implements IUserInterface {
   async choseAction<T extends string>(options: T[]): Promise<T> {
-    return await IO.select("Chose your action:", options);
+    return await IO.select<T>(
+      "Chose your action:",
+      this.prepareStringOptions(options),
+    );
   }
 
-  async createActor(): Promise<{ health: number; stamina: number }> {
-    return await IO.scale("Complete your stats:", { health: 2, stamina: 2 }, [
-      { name: 1, message: "extra light" },
-      { name: 2, message: "light" },
-      { name: 3, message: "medium" },
-      { name: 4, message: "heavy" },
-      { name: 5, message: "extra heavy" },
-    ]);
+  async createActor<T extends string>(
+    options: IPresetAndDetails<T>[],
+    id: string,
+  ): Promise<T> {
+    const prepared = options.reduce(
+      (arr, { value, details }) => [
+        ...arr,
+        {
+          name: value,
+          message: value.toUpperCase(),
+          hint: `(HP:${details.health} SP:${details.stamina})`,
+        },
+      ],
+      [] as IUIOption<T>[],
+    );
+
+    return await IO.select<T>("Chose your type:", prepared);
+  }
+
+  async chooseGameMode(availableModes: string[]): Promise<string | undefined> {
+    return;
+  }
+
+  async chooseAi<T extends string>(availableAis: T[]): Promise<T | undefined> {
+    return await IO.select<T>(
+      "Chose ai difficulty:",
+      this.prepareStringOptions(availableAis),
+    );
   }
 
   init(): void {
-    IO.write("***************************");
-    IO.write("**     Taste of IRON     **");
-    IO.write("**                       **");
-    IO.write("**    Its a game about   **");
-    IO.write("**     crushing faces!   **");
-    IO.write("***************************");
+    IO.writeDivider();
+    IO.write("Taste of IRON");
+    IO.writeEmpty();
+    IO.write("Its a game about");
+    IO.write("crushing faces!");
+    IO.writeDivider();
+  }
+
+  private showResult(title: string, info: IGameInfo, statsOnly = false): void {
+    IO.writeDivider();
+    IO.write(title);
+    IO.writeDivider(true);
+    IO.write(
+      [
+        "YOU",
+        `HP: ${info.player.health} SP: ${info.player.stamina} ${
+          statsOnly ? "" : info.player.executedAction.toUpperCase()
+        }`,
+      ],
+      false,
+    );
+    IO.writeDivider(true);
+    IO.write(
+      [
+        "EMY",
+        `HP: ${info.opponent.health} SP: ${info.opponent.stamina} ${
+          statsOnly ? "" : info.opponent.executedAction.toUpperCase()
+        }`,
+      ],
+      false,
+    );
+    IO.writeDivider();
+  }
+
+  private showBox(title: string): void {
+    IO.writeDivider();
+    IO.write(title);
+    IO.writeDivider();
+  }
+
+  showStats(info: IGameInfo): void {
+    this.showResult("FIGHTERS STATS", info, true);
   }
 
   showActionResults(info: IGameInfo): void {
-    IO.write("***************************");
-    IO.write("***    ACTION RESULTS   ***");
-    IO.write("***************************");
-    IO.write(
-      `* YOU * HP: ${info.player.health} SP: ${info.player.stamina} ${info.player.executedAction} *`,
-    );
-    IO.write("***************************");
-    IO.write(
-      `* EMY * HP: ${info.opponent.health} SP: ${info.opponent.stamina} ${info.opponent.executedAction} *`,
-    );
-    IO.write("***************************");
+    this.showResult("ACTION RESULTS", info);
   }
 
   showMatchResults(info: IGameInfo): void {
-    IO.write("***************************");
-    IO.write("***    MATCH RESULTS    ***");
-    IO.write("***************************");
-    IO.write(`* YOU * HP: ${info.player.health} SP: ${info.player.stamina} *`);
-    IO.write("***************************");
-    IO.write(
-      `* EMY * HP: ${info.opponent.health} SP: ${info.opponent.stamina} *`,
-    );
-    IO.write("***************************");
+    this.printGameStatus(info.winnerId);
+    this.showResult("MATCH RESULTS", info);
   }
 
   showRoundResults(info: IGameInfo): void {
-    IO.write("***************************");
-    IO.write("***    ROUND RESULTS    ***");
-    IO.write("***************************");
-    IO.write(
-      `* YOU *  HP: ${info.player.health} SP: ${info.player.stamina}  *`,
+    this.showBox("BREAK");
+    this.showResult("ROUND RESULTS", info, true);
+  }
+
+  private printGameStatus(winnerId?: string | null): void {
+    if (winnerId === "0") {
+      this.showCongratulations();
+      return;
+    }
+
+    if (winnerId === "1" || winnerId === "2") {
+      this.showGameOver();
+      return;
+    }
+
+    this.showDraw();
+  }
+
+  private showGameOver(): void {
+    this.showBox("GAME OVER");
+  }
+
+  private showCongratulations(): void {
+    this.showBox("CONGRATULATIONS !!!");
+  }
+
+  private showDraw(): void {
+    this.showBox("DRAW");
+  }
+
+  private prepareStringOptions<T extends string>(options: T[]): IUIOption<T>[] {
+    return options.reduce(
+      (arr, value) => [
+        ...arr,
+        {
+          name: value,
+          message: value.toUpperCase(),
+        },
+      ],
+      [] as IUIOption<T>[],
     );
-    IO.write("***************************");
-    IO.write(
-      `* EMY *  HP: ${info.opponent.health} SP: ${info.opponent.stamina}  *`,
-    );
-    IO.write("***************************");
-  }
-
-  showGameOver(): void {
-    IO.write("***************************");
-    IO.write("*****    GAME OVER    *****");
-    IO.write("***************************");
-  }
-
-  showCongratulations(): void {
-    IO.write("***************************");
-    IO.write("**  CONGRATULATIONS !!!  **");
-    IO.write("***************************");
-  }
-
-  showDraw(): void {
-    IO.write("***************************");
-    IO.write("******    DRAW !!!    *****");
-    IO.write("***************************");
   }
 
   async confirmRetry(): Promise<boolean> {
     return IO.confirm("Ready for retry?");
   }
+
+  destroy() {}
 }

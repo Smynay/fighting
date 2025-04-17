@@ -1,18 +1,19 @@
 import { ActorStatus, IActor } from "../actor";
 import { AttackAction } from "./Attack";
 import { BlockAction } from "./Block";
-import { RestActon } from "./Rest";
+import { RestAction } from "./Rest";
 import { IAction, IActionConstructor, IActionFactory } from "./interfaces";
-import { IdleActon } from "./Idle";
+import { IdleAction } from "./Idle";
+import { DodgeAction } from "./Dodge";
 
 export class ActionFactory implements IActionFactory {
-  static actionsByStatus: Record<keyof typeof ActorStatus, IActionConstructor> =
-    {
-      [ActorStatus.ATTACK]: AttackAction,
-      [ActorStatus.BLOCK]: BlockAction,
-      [ActorStatus.REST]: RestActon,
-      [ActorStatus.IDLE]: IdleActon,
-    };
+  static actionsByStatus: Record<`${ActorStatus}`, IActionConstructor> = {
+    [ActorStatus.ATTACK]: AttackAction,
+    [ActorStatus.BLOCK]: BlockAction,
+    [ActorStatus.REST]: RestAction,
+    [ActorStatus.IDLE]: IdleAction,
+    [ActorStatus.DODGE]: DodgeAction,
+  };
 
   constructor(
     private actor: IActor,

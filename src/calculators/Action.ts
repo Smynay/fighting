@@ -16,7 +16,6 @@ export class ActionCalculator {
     ];
 
     this.executeFight(actionsForExecute);
-    this.endFight(actionsForExecute);
   }
 
   private getSelectedActionForActor(actor: IActor, opponent: IActor): IAction {
@@ -32,9 +31,5 @@ export class ActionCalculator {
 
   private executeFight(actions: IAction[]): void {
     actions.forEach((action) => action.execute());
-  }
-
-  private endFight(actions: IAction[]): void {
-    actions.forEach((action) => action.end());
   }
 }

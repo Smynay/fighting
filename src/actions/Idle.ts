@@ -1,30 +1,56 @@
 import { IAction } from "./interfaces";
-import { ActorStatus, IActor } from "../actor";
-import { BasicAction } from "./BasicAction";
+import { Actor, ActorStatus, IActor } from "../actor";
 
-export class IdleActon extends BasicAction implements IAction {
+export class IdleAction implements IAction {
   constructor(
     protected actor: IActor,
     protected opponent: IActor,
-  ) {
-    super(actor, opponent);
-  }
+  ) {}
 
-  private DAMAGE_TROUGH_IDLE = 2;
-  private ENEMY_ACTIONS_FOR_SUCCESS = [
+  static ACTION_TYPE = ActorStatus.IDLE;
+  static DAMAGE_TROUGH_HEALTH = 2;
+  static DAMAGE_TROUGH_STAMINA = 0;
+  static HEALTH_COST = 0;
+  static STAMINA_COST = 0;
+  static ENEMY_ACTIONS_FOR_SUCCESS = [
     ActorStatus.BLOCK,
     ActorStatus.REST,
     ActorStatus.IDLE,
+    ActorStatus.DODGE,
   ];
 
+  static get ENEMY_ACTIONS_FOR_FAIL(): ActorStatus[] {
+    return Actor.POSSIBLE_ACTIONS.filter(
+      (action) => !IdleAction.ENEMY_ACTIONS_FOR_SUCCESS.includes(action),
+    );
+  }
+
+  get info() {
+    return {
+      description: "Service action means DO NOTHING",
+      staminaCost: 0,
+    };
+  }
+
   private checkSuccess(): boolean {
-    return this.ENEMY_ACTIONS_FOR_SUCCESS.includes(
+    return IdleAction.ENEMY_ACTIONS_FOR_SUCCESS.includes(
       this.opponent.executedAction,
     );
   }
 
+  prepare() {
+    this.actor.prepareAction(
+      IdleAction.HEALTH_COST,
+      IdleAction.STAMINA_COST,
+      IdleAction.ACTION_TYPE,
+    );
+  }
+
   private fail() {
-    this.actor.health = this.actor.health - this.DAMAGE_TROUGH_IDLE;
+    this.actor.reducePoints(
+      IdleAction.DAMAGE_TROUGH_HEALTH,
+      IdleAction.DAMAGE_TROUGH_STAMINA,
+    );
   }
 
   execute() {

@@ -1,20 +1,4 @@
 {
-  "ts-node": {
-    "esm": true,
-    "experimentalSpecifierResolution": "node",
-    "transpileOnly": true
-  },
-  "compilerOptions": {
-    "target": "es2018",
-    "module": "commonjs",
-    "moduleResolution": "node",
-    "noEmitOnError": true,
-    "lib": ["es2017"],
-    "strict": true,
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "outDir": "dist",
-    "rootDir": "./src"
-  },
-  "include": ["./**/*.ts", "./*.ts"]
+  "extends": "@tsconfig/node20/tsconfig.json",
+  "include": ["./**/*.ts", "*.ts"]
 }
