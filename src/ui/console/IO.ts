@@ -97,39 +97,4 @@ export class IO {
 
     console.log(output.join(""));
   }
-
-  static async scale<T extends Record<string, number>>(
-    text: string,
-    params: T,
-    scale: { name: number; message: string; value?: number }[],
-  ): Promise<T> {
-    const { result } = await prompt<{ result: typeof params }>({
-      type: "scale",
-      name: "result",
-      message: text,
-      // @ts-ignore
-      scale,
-      choices: Object.keys(params).map((value) => ({
-        name: value,
-        message: value.toLocaleUpperCase(),
-        initial: params[value],
-      })),
-    });
-
-    Object.keys(params).reduce(
-      (acc, key) =>
-        Object.assign(acc, {
-          [key]: scale[result[key]].value || scale[result[key]].name,
-        }),
-      {},
-    );
-
-    return Object.keys(params).reduce(
-      (acc, key) =>
-        Object.assign(acc, {
-          [key]: scale[result[key]].value || scale[result[key]].name,
-        }),
-      {},
-    ) as typeof params;
-  }
 }
