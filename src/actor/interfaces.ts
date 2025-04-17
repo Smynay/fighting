@@ -6,6 +6,11 @@ export enum ActorStatus {
   DODGE = "DODGE",
 }
 
+export interface IActorParams {
+  health: number;
+  stamina: number;
+}
+
 export interface IActorInfo {
   health: number;
   stamina: number;

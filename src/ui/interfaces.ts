@@ -1,4 +1,10 @@
-import { IGameInfo } from "../GameController";
+import { IGameInfo, IPresetAndDetails } from "../GameController";
+
+export interface IUIOption<T> {
+  name: T;
+  message: string;
+  hint: string;
+}
 
 export interface IUserInterface {
   init(): void;
@@ -7,7 +13,10 @@ export interface IUserInterface {
 
   chooseAi<T extends string>(availableAis: T[]): Promise<T | undefined>;
 
-  createActor<T extends string>(options: T[], id: string): Promise<T>;
+  createActor<T extends string>(
+    options: IPresetAndDetails<T>[],
+    id: string,
+  ): Promise<T>;
 
   showStats(info: IGameInfo): void;
 

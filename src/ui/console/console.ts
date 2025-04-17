@@ -1,14 +1,29 @@
-import { IUserInterface } from "../interfaces";
+import { IUIOption, IUserInterface } from "../interfaces";
 import { IO } from "./IO";
-import { IGameInfo } from "../../GameController";
+import { IGameInfo, IPresetAndDetails } from "../../GameController";
 
 export class ConsoleUI implements IUserInterface {
   async choseAction<T extends string>(options: T[]): Promise<T> {
     return await IO.select("Chose your action:", options);
   }
 
-  async createActor<T extends string>(options: T[], id: string): Promise<T> {
-    return await IO.select("Chose your actor type:", options);
+  async createActor<T extends string>(
+    options: IPresetAndDetails<T>[],
+    id: string,
+  ): Promise<T> {
+    const prepared = options.reduce(
+      (arr, { value, details }) => [
+        ...arr,
+        {
+          name: value,
+          message: value.toUpperCase(),
+          hint: `(HP:${details.health} SP:${details.stamina})`,
+        },
+      ],
+      [] as IUIOption<T>[],
+    );
+
+    return await IO.select<T>("Chose your actor type:", prepared);
   }
 
   async chooseGameMode(availableModes: string[]): Promise<string | undefined> {

@@ -1,5 +1,12 @@
 import { IUserInterface } from "./ui/interfaces";
-import { Actor, ActorId, ActorStatus, IActor, IActorInfo } from "./actor";
+import {
+  Actor,
+  ActorId,
+  ActorStatus,
+  IActor,
+  IActorInfo,
+  IActorParams,
+} from "./actor";
 import { RoundActionCounter } from "./counters";
 import { ActionCalculator, RoundBreakCalculator } from "./calculators";
 import { AIFactory, AI } from "./ai";
@@ -26,6 +33,11 @@ export interface IGameInfo {
   opponent: IActorInfo;
   winnerId?: ActorId | null;
   state: GameState;
+}
+
+export interface IPresetAndDetails<T extends string> {
+  value: T;
+  details: IActorParams;
 }
 
 export class GameController {
@@ -96,10 +108,17 @@ export class GameController {
     return this.opponent.id;
   }
 
-  private get availableActorPresets(): (keyof typeof GameController.AVAILABLE_ACTOR_PRESETS)[] {
-    return Object.keys(
+  private get availableActorPresetsAndDetails(): IPresetAndDetails<
+    keyof typeof GameController.AVAILABLE_ACTOR_PRESETS
+  >[] {
+    const presetNames = Object.keys(
       GameController.AVAILABLE_ACTOR_PRESETS,
     ) as (keyof typeof GameController.AVAILABLE_ACTOR_PRESETS)[];
+
+    return presetNames.map((name) => ({
+      value: name,
+      details: GameController.AVAILABLE_ACTOR_PRESETS[name],
+    }));
   }
 
   private getPresetByKey(
@@ -153,7 +172,10 @@ export class GameController {
       return this.ai.getActor();
     }
 
-    const preset = await this.ui.createActor(this.availableActorPresets, id);
+    const preset = await this.ui.createActor(
+      this.availableActorPresetsAndDetails,
+      id,
+    );
     const { health, stamina } = this.getPresetByKey(preset);
 
     return new Actor(health, stamina, id);

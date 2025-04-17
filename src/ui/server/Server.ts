@@ -5,6 +5,7 @@ import {
   GameMode,
   IGameControllerConstructor,
   IGameInfo,
+  IPresetAndDetails,
 } from "../../GameController";
 
 const LOOPTIME = 1000;
@@ -188,14 +189,17 @@ export class Server implements IUserInterface {
     return this.runRequest<boolean>(EServerEvents.CONFIRM_RETRY, "0");
   }
 
-  createActor<T extends string>(options: T[], id: string): Promise<T> {
+  createActor<T extends string>(
+    options: IPresetAndDetails<T>[],
+    id: string,
+  ): Promise<T> {
     console.log("createActor", id);
 
     this.currentGameRequest = EServerEvents.CREATE_ACTOR;
 
-    // TODO: add frontend support
+    // TODO: add frontend support for details of preset
     return this.runRequest(EServerEvents.CREATE_ACTOR, id, {
-      options,
+      options: options.map(({ value }) => value),
     });
   }
 

@@ -1,4 +1,5 @@
 import { prompt } from "enquirer";
+import { IUIOption } from "../interfaces";
 
 export class IO {
   static LINE_SIZE = 32;
@@ -27,9 +28,12 @@ export class IO {
     return result;
   }
 
+  /**
+   * Always returns 'name', not 'value' from option
+   */
   static async select<T extends string>(
     text: string,
-    options: T[],
+    options: T[] | IUIOption<T>[],
   ): Promise<T> {
     const { result } = await prompt<{ result: T }>({
       type: "select",
