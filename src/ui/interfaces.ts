@@ -3,7 +3,7 @@ import { IGameInfo, IPresetAndDetails } from "../GameController";
 export interface IUIOption<T> {
   name: T;
   message: string;
-  hint: string;
+  hint?: string;
 }
 
 export interface IUserInterface {

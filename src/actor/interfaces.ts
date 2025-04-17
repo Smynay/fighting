@@ -1,9 +1,9 @@
 export enum ActorStatus {
-  ATTACK = "ATTACK",
-  BLOCK = "BLOCK",
-  REST = "REST",
-  IDLE = "IDLE",
-  DODGE = "DODGE",
+  ATTACK = "attack",
+  BLOCK = "block",
+  REST = "rest",
+  IDLE = "idle",
+  DODGE = "dodge",
 }
 
 export interface IActorParams {

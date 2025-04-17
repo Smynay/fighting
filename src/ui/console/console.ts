@@ -4,7 +4,10 @@ import { IGameInfo, IPresetAndDetails } from "../../GameController";
 
 export class ConsoleUI implements IUserInterface {
   async choseAction<T extends string>(options: T[]): Promise<T> {
-    return await IO.select("Chose your action:", options);
+    return await IO.select<T>(
+      "Chose your action:",
+      this.prepareStringOptions(options),
+    );
   }
 
   async createActor<T extends string>(
@@ -23,7 +26,7 @@ export class ConsoleUI implements IUserInterface {
       [] as IUIOption<T>[],
     );
 
-    return await IO.select<T>("Chose your actor type:", prepared);
+    return await IO.select<T>("Chose your type:", prepared);
   }
 
   async chooseGameMode(availableModes: string[]): Promise<string | undefined> {
@@ -31,7 +34,10 @@ export class ConsoleUI implements IUserInterface {
   }
 
   async chooseAi<T extends string>(availableAis: T[]): Promise<T | undefined> {
-    return await IO.select("Chose your ai opponent difficulty:", availableAis);
+    return await IO.select<T>(
+      "Chose ai difficulty:",
+      this.prepareStringOptions(availableAis),
+    );
   }
 
   init(): void {
@@ -51,7 +57,7 @@ export class ConsoleUI implements IUserInterface {
       [
         "YOU",
         `HP: ${info.player.health} SP: ${info.player.stamina} ${
-          statsOnly ? "" : info.player.executedAction
+          statsOnly ? "" : info.player.executedAction.toUpperCase()
         }`,
       ],
       false,
@@ -61,7 +67,7 @@ export class ConsoleUI implements IUserInterface {
       [
         "EMY",
         `HP: ${info.opponent.health} SP: ${info.opponent.stamina} ${
-          statsOnly ? "" : info.opponent.executedAction
+          statsOnly ? "" : info.opponent.executedAction.toUpperCase()
         }`,
       ],
       false,
@@ -117,6 +123,19 @@ export class ConsoleUI implements IUserInterface {
 
   private showDraw(): void {
     this.showBox("DRAW");
+  }
+
+  private prepareStringOptions<T extends string>(options: T[]): IUIOption<T>[] {
+    return options.reduce(
+      (arr, value) => [
+        ...arr,
+        {
+          name: value,
+          message: value.toUpperCase(),
+        },
+      ],
+      [] as IUIOption<T>[],
+    );
   }
 
   async confirmRetry(): Promise<boolean> {

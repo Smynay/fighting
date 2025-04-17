@@ -7,14 +7,13 @@ import { IdleAction } from "./Idle";
 import { DodgeAction } from "./Dodge";
 
 export class ActionFactory implements IActionFactory {
-  static actionsByStatus: Record<keyof typeof ActorStatus, IActionConstructor> =
-    {
-      [ActorStatus.ATTACK]: AttackAction,
-      [ActorStatus.BLOCK]: BlockAction,
-      [ActorStatus.REST]: RestAction,
-      [ActorStatus.IDLE]: IdleAction,
-      [ActorStatus.DODGE]: DodgeAction,
-    };
+  static actionsByStatus: Record<`${ActorStatus}`, IActionConstructor> = {
+    [ActorStatus.ATTACK]: AttackAction,
+    [ActorStatus.BLOCK]: BlockAction,
+    [ActorStatus.REST]: RestAction,
+    [ActorStatus.IDLE]: IdleAction,
+    [ActorStatus.DODGE]: DodgeAction,
+  };
 
   constructor(
     private actor: IActor,
