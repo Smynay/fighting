@@ -1,7 +1,5 @@
 # About project
 
----
-
 It`s a turn-based fighting game that can be launched in **CLI** and **Server mode**.
 Game supports a two different gameplay modes such as **PvP** (only for Server) and **PvE**.
 
@@ -20,8 +18,6 @@ Please enjoy!
 
 
 ## Documentation
-
----
 
 ### Terms
 
